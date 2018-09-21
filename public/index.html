@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+    <title>upload</title>
+</head>
+<body>
+        <input type="file" id="upload">
+        <div id="button"></div>
+</body>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<script>
+$("#button").append("<button id='submit'>submit</button>");
+$("#submit").on("click",function(){
+var form = new FormData();
+form.append("file",document.getElementById("upload").files[0] );
+       var settings = {
+  "async": true,
+  "crossDomain": true,
+  "url": "/api/upload",
+  "method": "POST",
+  "processData": false,
+  "contentType": false,
+  "mimeType": "multipart/form-data",
+  "data": form
+}
+    $.ajax(settings).then(function(response){
+        alert(response)
+    });
+})
+
+
+</script>
