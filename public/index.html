@@ -5,11 +5,32 @@
 <body>
         <input type="file" id="upload">
         <div id="button"></div>
+        <hr />
+
+        <div id="files">
+
+        </div>
 </body>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <script>
+//create route to grab all files
+//append them to v
+function refreshAll(){
+    $.getJSON('/api/getall')
+.then((response)=>{
+    console.log(response);
+    response.filenames.forEach((element)=>{
+        $('#files').append("<a href=\"api/get/"+element+"\" >"+element+"</a><br /> <br />")
+    })
+    
+})
+
+}
+refreshAll();
+
+
 $("#button").append("<button id='submit'>submit</button>");
 $("#submit").on("click",function(){
 var form = new FormData();
@@ -26,6 +47,7 @@ form.append("file",document.getElementById("upload").files[0] );
 }
     $.ajax(settings).then(function(response){
         alert(response)
+        refreshAll();
     });
 })
 

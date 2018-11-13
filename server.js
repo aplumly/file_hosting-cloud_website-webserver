@@ -62,11 +62,31 @@ app.use(express.static("public"));
 
   app.post('/api/upload',upload.single('file'),function(req,res){
     console.log(req.file)
-
+    //store filename in sql database
     res.json(req.file.filename);
   
 })
 
+//maybe make a handlebars download page...
+
+
+var publicFolder = './app/uploads'
+//create a get-all files path...
+app.get('/api/getall', async function(req,res){
+let arr=[];
+  await fs.readdirSync(publicFolder).forEach(file => {
+    console.log(file);
+    arr.push(file);
+  })
+  res.json({filenames:arr})
+})
+
+
+app.get('/api/get/:path',function(req,res)
+{
+  let a =  req.params.path;
+  res.sendFile(path.join(__dirname,'./app/uploads/'+ a));
+});
 
 
 
@@ -75,3 +95,14 @@ app.use(express.static("public"));
     console.log("App listening on PORT " + PORT);
   });
   
+
+
+  
+//private uploads... just remember the filename and plug into the browser... serves dl page with handlebars just uses the filename on the api/uploads/:path route
+
+
+//public... stores name in sql database or... find a way to see all the files in a directory
+
+
+//inquirer prompt to see all files and delete them 
+
