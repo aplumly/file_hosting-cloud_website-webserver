@@ -4,7 +4,14 @@
 </head>
 <body>
         <input type="file" id="upload">
-        <div id="button"></div>
+        <br />
+        store as:
+        <select id="storageType">
+            <option value="public">public</option>
+            <option value="private">private</option>
+        </select>
+        <br />
+        <div id="button"><button id='submit'>submit</button></div>
         <hr />
 
         <div id="files">
@@ -12,12 +19,13 @@
         </div>
 </body>
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="/jquery-3.3.1.min.js"></script>
 
 <script>
 //create route to grab all files
 //append them to v
 function refreshAll(){
+    $('#files').empty();
     $.getJSON('/api/getall')
 .then((response)=>{
     console.log(response);
@@ -31,24 +39,28 @@ function refreshAll(){
 refreshAll();
 
 
-$("#button").append("<button id='submit'>submit</button>");
+
 $("#submit").on("click",function(){
-var form = new FormData();
-form.append("file",document.getElementById("upload").files[0] );
-       var settings = {
-  "async": true,
-  "crossDomain": true,
-  "url": "/api/upload",
-  "method": "POST",
-  "processData": false,
-  "contentType": false,
-  "mimeType": "multipart/form-data",
-  "data": form
-}
-    $.ajax(settings).then(function(response){
-        alert(response)
-        refreshAll();
-    });
+
+    let storageType=$('#storageType').val();
+    let url;
+    if(storageType==='public'){url='/api/upload'}else{url='/api/uploadprivate'}
+    var form = new FormData();
+    form.append("file",document.getElementById("upload").files[0] );
+        var settings = {
+    "async": true,
+    "crossDomain": true,
+    "url": url,
+    "method": "POST",
+    "processData": false,
+    "contentType": false,
+    "mimeType": "multipart/form-data",
+    "data": form
+    }
+        $.ajax(settings).then(function(response){
+            alert(response)
+            refreshAll();
+        });
 })
 
 

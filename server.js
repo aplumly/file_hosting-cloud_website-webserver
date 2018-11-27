@@ -16,6 +16,16 @@ const storage = multer.diskStorage({
     }
   });
 
+  const storagePrivate = multer.diskStorage({
+    destination:function(req,file,cb){
+      cb(null,'./app/private/');
+    },
+    filename: function(req,file,cb){
+      cb(null,new Date().toISOString().replace(/:/g, '-')+file.originalname);
+    }
+  });
+
+  const uploadprivate = multer({storage:storagePrivate});
   const upload = multer({storage: storage});
 
 
@@ -67,9 +77,13 @@ app.use(express.static("public"));
   
 })
 
+app.post('/api/uploadprivate',uploadprivate.single('file'),function(req,res){
+  res.json(req.file.filename)
+})
+
 //maybe make a handlebars download page...
 
-
+var privateFolder = './app/private'
 var publicFolder = './app/uploads'
 //create a get-all files path...
 app.get('/api/getall', async function(req,res){
@@ -82,12 +96,33 @@ let arr=[];
 })
 
 
-app.get('/api/get/:path',function(req,res)
+
+
+app.get('/api/get/:path',async function(req,res)
 {
   let a =  req.params.path;
-  res.sendFile(path.join(__dirname,'./app/uploads/'+ a));
+  let arr=[];
+  fs.readdirSync(publicFolder).forEach(file=> {
+    if(a==file)
+    {
+      return res.sendFile(path.join(__dirname,'./app/uploads/'+ a));
+    }
+  })
+  
 });
 
+app.get('/api/getprivate/:path',async function(req,res)
+{
+  let a = req.params.path;
+  let arr=[];
+  fs.readdirSync(privateFolder).forEach(file => {
+    if(a==file)
+    {
+      return res.sendFile(path.join(__dirname,'./app/private/'+ a));
+    }
+  })
+  
+})
 
 
   
